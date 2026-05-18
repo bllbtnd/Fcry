@@ -19,10 +19,10 @@ public static class FileEncryptor
             var plaintext = await File.ReadAllBytesAsync(sourcePath, cancellationToken);
             progress?.Report(0.3);
 
-            Span<byte> perFileSalt = stackalloc byte[FileHeader.SaltSize];
-            Span<byte> iv = stackalloc byte[FileHeader.IvSize];
-            RandomNumberGenerator.Fill(perFileSalt);
-            RandomNumberGenerator.Fill(iv);
+            var perFileSalt = new byte[FileHeader.SaltSize];
+            var iv = new byte[FileHeader.IvSize];
+            RandomNumberGenerator.Fill(perFileSalt.AsSpan());
+            RandomNumberGenerator.Fill(iv.AsSpan());
 
             var fileKey = new byte[32];
             try
@@ -44,8 +44,8 @@ public static class FileEncryptor
                 await using var output = new FileStream(destPath, FileMode.Create, FileAccess.Write);
                 await output.WriteAsync(FileHeader.Magic, cancellationToken);
                 output.WriteByte(FileHeader.CurrentVersion);
-                await output.WriteAsync(perFileSalt.ToArray(), cancellationToken);
-                await output.WriteAsync(iv.ToArray(), cancellationToken);
+                await output.WriteAsync(perFileSalt, cancellationToken);
+                await output.WriteAsync(iv, cancellationToken);
                 await output.WriteAsync(fileNameLenBytes, cancellationToken);
                 await output.WriteAsync(fileNameBytes, cancellationToken);
                 await output.WriteAsync(ciphertext, cancellationToken);
