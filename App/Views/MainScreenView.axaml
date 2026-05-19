@@ -1,0 +1,172 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Fcry.App.ViewModels"
+             xmlns:conv="using:Fcry.App.Converters"
+             x:Class="Fcry.App.Views.MainScreenView"
+             x:DataType="vm:MainScreenViewModel"
+             Background="#0d0d1a">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Top bar -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" Margin="16 12">
+            <TextBlock Grid.Column="0"
+                       Text="FCRY"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       Foreground="#e94560"
+                       LetterSpacing="6"
+                       VerticalAlignment="Center" />
+
+            <Border Grid.Column="1"
+                    Background="#2a0a12"
+                    BorderBrush="#e94560"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="10 4"
+                    Margin="0 0 10 0"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding CountdownSeconds, Converter={x:Static ObjectConverters.IsNotNull}}">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBlock Text="auto-lock in"
+                               FontSize="11"
+                               Foreground="#cc3344"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding CountdownSeconds}"
+                               FontSize="12"
+                               FontWeight="Bold"
+                               Foreground="#e94560"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="s"
+                               FontSize="11"
+                               Foreground="#cc3344"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+            </Border>
+
+            <Button Grid.Column="2"
+                    Content="Lock"
+                    Command="{Binding LockCommand}"
+                    Background="#1e1e3a"
+                    Foreground="#8888cc"
+                    CornerRadius="8"
+                    Padding="14 6"
+                    FontSize="13"
+                    VerticalAlignment="Center" />
+        </Grid>
+
+        <!-- Drop zone + queue -->
+        <Grid Grid.Row="1" RowDefinitions="*,Auto" Margin="16 0">
+
+            <!-- Drop zone -->
+            <Border Grid.Row="0"
+                    x:Name="DropZone"
+                    CornerRadius="12"
+                    Margin="0 0 0 12"
+                    MinHeight="160"
+                    Background="#10111e">
+                <Border.Styles>
+                    <Style Selector="Border#DropZone">
+                        <Setter Property="BorderBrush" Value="#1e1e3a" />
+                        <Setter Property="BorderThickness" Value="2" />
+                    </Style>
+                    <Style Selector="Border#DropZone.dragover">
+                        <Setter Property="BorderBrush" Value="#e94560" />
+                        <Setter Property="Background" Value="#1a0810" />
+                    </Style>
+                </Border.Styles>
+
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10">
+                    <TextBlock Text="⬇"
+                               FontSize="44"
+                               HorizontalAlignment="Center"
+                               Foreground="#2a2a4a" />
+                    <TextBlock Text="Drop files to encrypt or decrypt"
+                               FontSize="15"
+                               Foreground="#44445a"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text=".fcry files are auto-detected as encrypted"
+                               FontSize="11"
+                               Foreground="#33334a"
+                               HorizontalAlignment="Center" />
+                </StackPanel>
+            </Border>
+
+            <!-- File queue -->
+            <Grid Grid.Row="1"
+                  RowDefinitions="Auto,*"
+                  IsVisible="{Binding HasFiles}">
+
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0 0 0 6">
+                    <TextBlock Grid.Column="0"
+                               Text="Queue"
+                               FontSize="12"
+                               Foreground="#555577"
+                               VerticalAlignment="Center" />
+                    <Button Grid.Column="1"
+                            Content="Clear done"
+                            Command="{Binding ClearQueueCommand}"
+                            Background="Transparent"
+                            Foreground="#555577"
+                            FontSize="11"
+                            Padding="8 2" />
+                </Grid>
+
+                <ScrollViewer Grid.Row="1" MaxHeight="220">
+                    <ItemsControl ItemsSource="{Binding FileQueue}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:FileQueueItem">
+                                <Border BorderBrush="#1a1a2e"
+                                        BorderThickness="0 0 0 1"
+                                        Padding="10 8">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+
+                                        <TextBlock Grid.Column="0"
+                                                   Text="{Binding OperationIcon}"
+                                                   FontSize="15"
+                                                   Margin="0 0 10 0"
+                                                   VerticalAlignment="Center" />
+
+                                        <StackPanel Grid.Column="1" Spacing="3" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding FileName}"
+                                                       FontSize="13"
+                                                       Foreground="#ccccee"
+                                                       TextTrimming="CharacterEllipsis" />
+                                            <ProgressBar Value="{Binding Progress}"
+                                                         Minimum="0"
+                                                         Maximum="100"
+                                                         Height="2"
+                                                         Foreground="#e94560"
+                                                         Background="#1e1e3a"
+                                                         IsVisible="{Binding Status, Converter={x:Static conv:AppConverters.StatusIsProcessing}}" />
+                                        </StackPanel>
+
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding StatusText}"
+                                                   FontSize="11"
+                                                   Margin="12 0 0 0"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="{Binding Status, Converter={x:Static conv:AppConverters.StatusToBrush}}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+
+        </Grid>
+
+        <!-- Status bar -->
+        <Border Grid.Row="2"
+                Background="#0a0a14"
+                BorderBrush="#1a1a2a"
+                BorderThickness="0 1 0 0"
+                Padding="16 6">
+            <TextBlock Text="{Binding FileQueue.Count, StringFormat='Queue: {0} file(s)'}"
+                       FontSize="11"
+                       Foreground="#333355" />
+        </Border>
+
+    </Grid>
+</UserControl>

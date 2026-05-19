@@ -16,6 +16,8 @@ public sealed partial class FileQueueItem : ObservableObject
 
     public string FilePath { get; init; } = string.Empty;
 
+    public string OperationIcon => Operation == FileOperation.Encrypt ? "🔒" : "🔓";
+
     public string StatusText => Status switch
     {
         FileStatus.Pending => "Pending",

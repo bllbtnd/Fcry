@@ -21,6 +21,8 @@ public sealed partial class MainScreenViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private int? _countdownSeconds;
     [ObservableProperty] private bool _isDragOver;
 
+    public bool HasFiles => FileQueue.Count > 0;
+
     public event EventHandler? LockRequested;
 
     public MainScreenViewModel(MasterKeyManager keyManager)
@@ -28,6 +30,7 @@ public sealed partial class MainScreenViewModel : ViewModelBase, IDisposable
         _keyManager = keyManager;
         _lastActivity = DateTime.UtcNow;
         _inactivityTimer = new System.Threading.Timer(OnInactivityTick, null, 1000, 1000);
+        FileQueue.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasFiles));
     }
 
     public void ResetInactivityTimer()
