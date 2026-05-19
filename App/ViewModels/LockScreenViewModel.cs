@@ -1,0 +1,112 @@
+using System.Security.Cryptography;
+using System.Text;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Fcry.Core.Crypto;
+using Fcry.Core.IO;
+using Fcry.Core.Models;
+
+namespace Fcry.App.ViewModels;
+
+public sealed partial class LockScreenViewModel : ViewModelBase
+{
+    private readonly MasterKeyManager _keyManager;
+    private readonly AppConfig _config;
+    private readonly Func<Task<string?>> _pickKeyFile;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(UnlockCommand))]
+    [NotifyPropertyChangedFor(nameof(UnlockButtonText))]
+    private bool _isUnlocking;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(UnlockCommand))]
+    private string _passphrase = string.Empty;
+
+    [ObservableProperty] private string? _keyFilePath;
+    [ObservableProperty] private string? _errorMessage;
+
+    public string UnlockButtonText => IsUnlocking ? "Unlocking..." : "Unlock";
+
+    public event EventHandler? UnlockSucceeded;
+
+    public LockScreenViewModel(MasterKeyManager keyManager, AppConfig config, Func<Task<string?>> pickKeyFile)
+    {
+        _keyManager = keyManager;
+        _config = config;
+        _pickKeyFile = pickKeyFile;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanUnlock))]
+    private async Task UnlockAsync()
+    {
+        IsUnlocking = true;
+        ErrorMessage = null;
+
+        var passphraseBytes = Encoding.UTF8.GetBytes(Passphrase);
+        Passphrase = string.Empty;
+
+        try
+        {
+            var key = await Task.Run(() => ArgonKeyDerivation.DeriveKey(passphraseBytes, _config.ArgonSalt));
+
+            try
+            {
+                if (!string.IsNullOrEmpty(KeyFilePath))
+                {
+                    var keyFileData = await File.ReadAllBytesAsync(KeyFilePath);
+                    var keyFileHash = SHA256.HashData(keyFileData);
+                    for (var i = 0; i < 32; i++)
+                        key[i] ^= keyFileHash[i];
+                    CryptographicOperations.ZeroMemory(keyFileHash);
+                }
+
+                var verification = HMACSHA256.HashData(key, "fcry-verify"u8.ToArray());
+
+                if (_config.PassphraseVerification == null || _config.PassphraseVerification.Length == 0)
+                {
+                    _config.PassphraseVerification = verification;
+                    ConfigManager.Save(_config);
+                }
+                else if (!CryptographicOperations.FixedTimeEquals(verification, _config.PassphraseVerification))
+                {
+                    CryptographicOperations.ZeroMemory(key);
+                    CryptographicOperations.ZeroMemory(verification);
+                    ErrorMessage = "Wrong passphrase.";
+                    return;
+                }
+
+                CryptographicOperations.ZeroMemory(verification);
+                _keyManager.SetKey(key);
+                UnlockSucceeded?.Invoke(this, EventArgs.Empty);
+            }
+            catch
+            {
+                CryptographicOperations.ZeroMemory(key);
+                throw;
+            }
+        }
+        catch (Exception ex) when (ex.Message != null && !(ex is OperationCanceledException))
+        {
+            ErrorMessage = $"Unlock failed: {ex.Message}";
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(passphraseBytes);
+            IsUnlocking = false;
+        }
+    }
+
+    private bool CanUnlock() => !string.IsNullOrEmpty(Passphrase) && !IsUnlocking;
+
+    [RelayCommand]
+    private async Task BrowseKeyFileAsync()
+    {
+        var path = await _pickKeyFile();
+        if (path != null)
+            KeyFilePath = path;
+    }
+
+    [RelayCommand]
+    private void ClearKeyFile() => KeyFilePath = null;
+}
