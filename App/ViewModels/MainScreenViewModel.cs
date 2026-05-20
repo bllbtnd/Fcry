@@ -111,11 +111,7 @@ public sealed partial class MainScreenViewModel : ViewModelBase, IDisposable
     private async Task ProcessItemAsync(FileQueueItem item)
     {
         item.Status = FileStatus.Processing;
-        var progress = new Progress<double>(p =>
-        {
-            item.Progress = p * 100;
-            item.OnPropertyChanged(nameof(item.StatusText));
-        });
+        var progress = new Progress<double>(p => item.Progress = p * 100);
 
         var masterKeyBytes = _keyManager.CopyKey();
         try
