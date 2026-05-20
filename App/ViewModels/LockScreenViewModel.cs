@@ -86,7 +86,7 @@ public sealed partial class LockScreenViewModel : ViewModelBase
                 throw;
             }
         }
-        catch (Exception ex) when (ex.Message != null && !(ex is OperationCanceledException))
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
             ErrorMessage = $"Unlock failed: {ex.Message}";
         }

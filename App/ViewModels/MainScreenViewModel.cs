@@ -110,10 +110,27 @@ public sealed partial class MainScreenViewModel : ViewModelBase, IDisposable
 
     private async Task ProcessItemAsync(FileQueueItem item)
     {
+        if (!_keyManager.IsUnlocked)
+        {
+            item.Status = FileStatus.Failed;
+            item.Error = "Session locked.";
+            return;
+        }
+
         item.Status = FileStatus.Processing;
         var progress = new Progress<double>(p => item.Progress = p * 100);
 
-        var masterKeyBytes = _keyManager.CopyKey();
+        byte[] masterKeyBytes;
+        try
+        {
+            masterKeyBytes = _keyManager.CopyKey();
+        }
+        catch (InvalidOperationException)
+        {
+            item.Status = FileStatus.Failed;
+            item.Error = "Session locked.";
+            return;
+        }
         try
         {
             var masterKey = masterKeyBytes.AsMemory();
