@@ -10,7 +10,7 @@
         MinWidth="600"
         MinHeight="420"
         Background="#0d0d1a"
-        Icon="/Assets/icon.ico">
+        Icon="avares://Fcry/Assets/icon.ico">
 
     <ContentControl Content="{Binding CurrentView}">
         <ContentControl.DataTemplates>
