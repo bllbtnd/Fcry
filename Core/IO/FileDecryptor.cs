@@ -58,13 +58,16 @@ public static class FileDecryptor
             var ciphertext = remaining[..^FileHeader.TagSize];
 
             var fileKey = new byte[32];
+            var plaintext = new byte[ciphertext.Length];
             try
             {
                 HkdfDerivation.DeriveFileKey(masterKey.Span, perFileSalt, fileKey);
 
-                var plaintext = new byte[ciphertext.Length];
                 if (!AesGcmCipher.TryDecrypt(fileKey, iv, ciphertext, tag, plaintext))
+                {
+                    CryptographicOperations.ZeroMemory(plaintext);
                     return CryptoResult.Fail("Decryption failed. Wrong passphrase or corrupted file.");
+                }
 
                 progress?.Report(0.8);
 
@@ -77,6 +80,7 @@ public static class FileDecryptor
             finally
             {
                 CryptographicOperations.ZeroMemory(fileKey);
+                CryptographicOperations.ZeroMemory(plaintext);
             }
         }
         catch (OperationCanceledException)
