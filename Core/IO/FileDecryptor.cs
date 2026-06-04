@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
 using Fcry.Core.Crypto;
@@ -39,15 +40,14 @@ public static class FileDecryptor
             offset += FileHeader.IvSize;
 
             var nameLenBytes = span.Slice(offset, FileHeader.FilenameLengthSize).ToArray();
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(nameLenBytes);
+            if (BitConverter.IsLittleEndian) Array.Reverse(nameLenBytes);
             var nameLen = (int)BitConverter.ToInt64(nameLenBytes, 0);
             offset += FileHeader.FilenameLengthSize;
 
             if (nameLen < 0 || nameLen > 4096 || offset + nameLen > span.Length)
                 return CryptoResult.Fail("Invalid file header.");
 
-            var fileName = Encoding.UTF8.GetString(span.Slice(offset, nameLen));
+            var storedName = Encoding.UTF8.GetString(span.Slice(offset, nameLen));
             offset += nameLen;
 
             var remaining = span[offset..];
@@ -71,8 +71,20 @@ public static class FileDecryptor
 
                 progress?.Report(0.8);
 
-                var destPath = Path.Combine(destDirectory, fileName);
-                await File.WriteAllBytesAsync(destPath, plaintext, cancellationToken);
+                if (storedName.EndsWith('/'))
+                {
+                    var folderName = storedName.TrimEnd('/');
+                    var folderDest = Path.Combine(destDirectory, folderName);
+                    Directory.CreateDirectory(folderDest);
+                    using var ms = new MemoryStream(plaintext);
+                    using var archive = new ZipArchive(ms, ZipArchiveMode.Read);
+                    archive.ExtractToDirectory(folderDest, overwriteFiles: true);
+                }
+                else
+                {
+                    var destPath = Path.Combine(destDirectory, storedName);
+                    await File.WriteAllBytesAsync(destPath, plaintext, cancellationToken);
+                }
 
                 progress?.Report(1.0);
                 return CryptoResult.Ok();
@@ -83,14 +95,8 @@ public static class FileDecryptor
                 CryptographicOperations.ZeroMemory(plaintext);
             }
         }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            return CryptoResult.Fail(ex.Message);
-        }
+        catch (OperationCanceledException) { throw; }
+        catch (Exception ex) { return CryptoResult.Fail(ex.Message); }
     }
 
     public static bool IsFcryFile(string path)
@@ -101,9 +107,6 @@ public static class FileDecryptor
             Span<byte> magic = stackalloc byte[FileHeader.MagicSize];
             return fs.Read(magic) == FileHeader.MagicSize && magic.SequenceEqual(FileHeader.Magic);
         }
-        catch
-        {
-            return false;
-        }
+        catch { return false; }
     }
 }

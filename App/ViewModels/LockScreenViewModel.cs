@@ -3,7 +3,6 @@ using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Fcry.Core.Crypto;
-using Fcry.Core.IO;
 using Fcry.Core.Models;
 
 namespace Fcry.App.ViewModels;
@@ -61,22 +60,6 @@ public sealed partial class LockScreenViewModel : ViewModelBase
                     CryptographicOperations.ZeroMemory(keyFileHash);
                 }
 
-                var verification = HMACSHA256.HashData(key, "fcry-verify"u8.ToArray());
-
-                if (_config.PassphraseVerification == null || _config.PassphraseVerification.Length == 0)
-                {
-                    _config.PassphraseVerification = verification;
-                    ConfigManager.Save(_config);
-                }
-                else if (!CryptographicOperations.FixedTimeEquals(verification, _config.PassphraseVerification))
-                {
-                    CryptographicOperations.ZeroMemory(key);
-                    CryptographicOperations.ZeroMemory(verification);
-                    ErrorMessage = "Wrong passphrase.";
-                    return;
-                }
-
-                CryptographicOperations.ZeroMemory(verification);
                 _keyManager.SetKey(key);
                 UnlockSucceeded?.Invoke(this, EventArgs.Empty);
             }

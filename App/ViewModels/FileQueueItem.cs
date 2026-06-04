@@ -15,8 +15,13 @@ public sealed partial class FileQueueItem : ObservableObject
     [ObservableProperty] private string? _error;
 
     public string FilePath { get; init; } = string.Empty;
+    public bool IsFolder { get; init; }
 
-    public string OperationIcon => Operation == FileOperation.Encrypt ? "🔒" : "🔓";
+    public string OperationIcon => Operation switch
+    {
+        FileOperation.Encrypt => IsFolder ? "📁" : "🔒",
+        _ => "🔓"
+    };
 
     public string StatusText => Status switch
     {

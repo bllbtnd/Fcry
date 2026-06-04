@@ -77,11 +77,17 @@ public sealed partial class MainScreenViewModel : ViewModelBase, IDisposable
 
         foreach (var path in paths)
         {
-            var isFcry = FileDecryptor.IsFcryFile(path);
+            var isFolder = Directory.Exists(path);
+            var isFcry = !isFolder && FileDecryptor.IsFcryFile(path);
+            var displayName = isFolder
+                ? Path.GetFileName(path.TrimEnd(Path.DirectorySeparatorChar,
+                                               Path.AltDirectorySeparatorChar)) + "/"
+                : Path.GetFileName(path);
             FileQueue.Add(new FileQueueItem
             {
-                FileName = Path.GetFileName(path),
+                FileName = displayName,
                 FilePath = path,
+                IsFolder = isFolder,
                 Operation = isFcry ? FileOperation.Decrypt : FileOperation.Encrypt
             });
         }
@@ -138,8 +144,11 @@ public sealed partial class MainScreenViewModel : ViewModelBase, IDisposable
 
             if (item.Operation == FileOperation.Encrypt)
             {
-                var destPath = item.FilePath + ".fcry";
-                result = await FileEncryptor.EncryptAsync(item.FilePath, destPath, masterKey, progress);
+                var destPath = item.FilePath.TrimEnd(
+                    Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + ".fcry";
+                result = item.IsFolder
+                    ? await FileEncryptor.EncryptFolderAsync(item.FilePath, destPath, masterKey, progress)
+                    : await FileEncryptor.EncryptAsync(item.FilePath, destPath, masterKey, progress);
             }
             else
             {

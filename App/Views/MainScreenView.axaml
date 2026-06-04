@@ -81,11 +81,11 @@
                                FontSize="44"
                                HorizontalAlignment="Center"
                                Foreground="#2a2a4a" />
-                    <TextBlock Text="Drop files to encrypt or decrypt"
+                    <TextBlock Text="Drop files or folders to encrypt or decrypt"
                                FontSize="15"
                                Foreground="#44445a"
                                HorizontalAlignment="Center" />
-                    <TextBlock Text=".fcry files are auto-detected as encrypted"
+                    <TextBlock Text=".fcry files and folders are auto-detected"
                                FontSize="11"
                                Foreground="#33334a"
                                HorizontalAlignment="Center" />
