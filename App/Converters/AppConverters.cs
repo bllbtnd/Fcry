@@ -12,10 +12,10 @@ public static class AppConverters
     public static readonly FuncValueConverter<FileStatus, IBrush> StatusToBrush =
         new(status => status switch
         {
-            FileStatus.Done => new SolidColorBrush(Color.Parse("#44cc88")),
-            FileStatus.Failed => new SolidColorBrush(Color.Parse("#e94560")),
-            FileStatus.Processing => new SolidColorBrush(Color.Parse("#8888cc")),
-            _ => new SolidColorBrush(Color.Parse("#555577"))
+            FileStatus.Done => new SolidColorBrush(Color.Parse("#30d158")),
+            FileStatus.Failed => new SolidColorBrush(Color.Parse("#ff453a")),
+            FileStatus.Processing => new SolidColorBrush(Color.Parse("#0a84ff")),
+            _ => new SolidColorBrush(Color.Parse("#636366"))
         });
 
     public static readonly FuncValueConverter<FileStatus, bool> StatusIsProcessing =

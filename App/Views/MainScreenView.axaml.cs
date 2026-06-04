@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Fcry.App.ViewModels;
@@ -19,6 +20,9 @@ public partial class MainScreenView : UserControl
         AddHandler(DragDrop.DragOverEvent, OnDragOver);
         AddHandler(DragDrop.DragLeaveEvent, OnDragLeave);
         DragDrop.SetAllowDrop(DropZone, true);
+
+        if (TitleBar != null)
+            TitleBar.PointerPressed += OnTitleBarPointerPressed;
     }
 
     protected override void OnUnloaded(RoutedEventArgs e)
@@ -26,7 +30,15 @@ public partial class MainScreenView : UserControl
         RemoveHandler(DragDrop.DropEvent, OnDrop);
         RemoveHandler(DragDrop.DragOverEvent, OnDragOver);
         RemoveHandler(DragDrop.DragLeaveEvent, OnDragLeave);
+        if (TitleBar != null)
+            TitleBar.PointerPressed -= OnTitleBarPointerPressed;
         base.OnUnloaded(e);
+    }
+
+    private void OnTitleBarPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            (TopLevel.GetTopLevel(this) as Window)?.BeginMoveDrag(e);
     }
 
     private void OnDragOver(object? sender, DragEventArgs e)
@@ -36,10 +48,7 @@ public partial class MainScreenView : UserControl
         SetDragOver(true);
     }
 
-    private void OnDragLeave(object? sender, DragEventArgs e)
-    {
-        SetDragOver(false);
-    }
+    private void OnDragLeave(object? sender, DragEventArgs e) => SetDragOver(false);
 
     private async void OnDrop(object? sender, DragEventArgs e)
     {
@@ -64,12 +73,7 @@ public partial class MainScreenView : UserControl
         if (DataContext is MainScreenViewModel vm)
             vm.IsDragOver = value;
 
-        if (DropZone != null)
-        {
-            if (value)
-                DropZone.Classes.Add("dragover");
-            else
-                DropZone.Classes.Remove("dragover");
-        }
+        if (DashNormal != null) DashNormal.IsVisible = !value;
+        if (DashHover != null) DashHover.IsVisible = value;
     }
 }

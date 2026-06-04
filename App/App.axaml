@@ -4,5 +4,104 @@
              RequestedThemeVariant="Dark">
     <Application.Styles>
         <FluentTheme />
+
+        <!-- ── Typography ──────────────────────────────────────────── -->
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="#ebebf5" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+
+        <!-- ── TextBox — macOS NSTextField style ──────────────────── -->
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="#3a3a3c" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Foreground" Value="#ffffff" />
+            <Setter Property="CaretBrush" Value="#0a84ff" />
+            <Setter Property="SelectionBrush" Value="#2e6de6" />
+            <Setter Property="Padding" Value="10 8" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="MinHeight" Value="34" />
+        </Style>
+        <Style Selector="TextBox:focus">
+            <Setter Property="Background" Value="#2c2c2e" />
+            <Setter Property="BorderBrush" Value="#0a84ff" />
+            <Setter Property="BorderThickness" Value="1.5" />
+        </Style>
+        <!-- ── Button base ────────────────────────────────────────── -->
+        <Style Selector="Button">
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Padding" Value="14 7" />
+            <Setter Property="Background" Value="#3a3a3c" />
+            <Setter Property="Foreground" Value="#ebebf5" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#48484a" />
+        </Style>
+        <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#545456" />
+            <Setter Property="Opacity" Value="0.85" />
+        </Style>
+
+        <!-- ── Button.primary — macOS blue ───────────────────────── -->
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#0a84ff" />
+            <Setter Property="Foreground" Value="#ffffff" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="Button.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#409cff" />
+        </Style>
+        <Style Selector="Button.primary:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#0070e0" />
+        </Style>
+        <Style Selector="Button.primary:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#0a84ff" />
+            <Setter Property="Opacity" Value="0.35" />
+        </Style>
+
+        <!-- ── Button.ghost — inline text action ─────────────────── -->
+        <Style Selector="Button.ghost">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#636366" />
+            <Setter Property="Padding" Value="8 4" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+        <Style Selector="Button.ghost:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Opacity" Value="0.7" />
+        </Style>
+
+        <!-- ── Button.toolbar — small titlebar action ────────────── -->
+        <Style Selector="Button.toolbar">
+            <Setter Property="Background" Value="#ffffff14" />
+            <Setter Property="Foreground" Value="#ebebf5cc" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Padding" Value="10 4" />
+        </Style>
+        <Style Selector="Button.toolbar:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#ffffff24" />
+        </Style>
+
+        <!-- ── ProgressBar ────────────────────────────────────────── -->
+        <Style Selector="ProgressBar">
+            <Setter Property="Background" Value="#3a3a3c" />
+            <Setter Property="Foreground" Value="#0a84ff" />
+            <Setter Property="CornerRadius" Value="1" />
+            <Setter Property="MinHeight" Value="2" />
+            <Setter Property="MaxHeight" Value="2" />
+        </Style>
+
+        <!-- ── ScrollBar ──────────────────────────────────────────── -->
+        <Style Selector="ScrollBar">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+
     </Application.Styles>
 </Application>

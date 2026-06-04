@@ -3,96 +3,90 @@
              xmlns:vm="using:Fcry.App.ViewModels"
              x:Class="Fcry.App.Views.LockScreenView"
              x:DataType="vm:LockScreenViewModel"
-             Background="#0d0d1a">
+             Background="#1c1c1e">
 
     <Grid>
-        <Border MaxWidth="380"
-                Background="#13131f"
-                BorderBrush="#1e1e3a"
-                BorderThickness="1"
-                CornerRadius="16"
-                Padding="40 36"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center"
-                BoxShadow="0 8 40 0 #40000000">
+        <!-- Centered form — traffic lights float above top-left, safe here -->
+        <StackPanel MaxWidth="300"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="0">
 
-            <StackPanel Spacing="20">
+            <!-- Lock icon -->
+            <TextBlock Text="🔐"
+                       FontSize="44"
+                       HorizontalAlignment="Center"
+                       Margin="0 0 0 16" />
 
-                <StackPanel Spacing="4" HorizontalAlignment="Center">
-                    <TextBlock Text="FCRY"
-                               FontSize="36"
-                               FontWeight="Bold"
-                               Foreground="#e94560"
-                               HorizontalAlignment="Center"
-                               LetterSpacing="10" />
-                    <TextBlock Text="file encryption"
-                               FontSize="11"
-                               Foreground="#555577"
-                               HorizontalAlignment="Center"
-                               LetterSpacing="3" />
-                </StackPanel>
+            <!-- Title -->
+            <TextBlock Text="Fcry"
+                       FontSize="22"
+                       FontWeight="SemiBold"
+                       Foreground="#ffffff"
+                       HorizontalAlignment="Center"
+                       Margin="0 0 0 6" />
 
-                <Separator Background="#1e1e3a" Height="1" Margin="0 4" />
+            <!-- Subtitle -->
+            <TextBlock Text="Enter your passphrase to continue"
+                       FontSize="13"
+                       Foreground="#636366"
+                       HorizontalAlignment="Center"
+                       Margin="0 0 0 28" />
 
-                <StackPanel Spacing="8">
-                    <TextBlock Text="Passphrase"
-                               FontSize="12"
-                               Foreground="#8888aa" />
-                    <TextBox x:Name="PassphraseBox"
-                             Text="{Binding Passphrase}"
-                             PasswordChar="●"
-                             Watermark="Enter your passphrase"
-                             IsEnabled="{Binding !IsUnlocking}"
-                             FontSize="14" />
-                </StackPanel>
+            <!-- Passphrase field -->
+            <TextBox x:Name="PassphraseBox"
+                     Text="{Binding Passphrase}"
+                     PasswordChar="●"
+                     Watermark="Passphrase"
+                     IsEnabled="{Binding !IsUnlocking}" />
 
-                <StackPanel Spacing="8">
-                    <TextBlock Text="Key file (optional)"
-                               FontSize="12"
-                               Foreground="#8888aa" />
-                    <Grid ColumnDefinitions="*,Auto,Auto">
-                        <TextBox Grid.Column="0"
-                                 Text="{Binding KeyFilePath}"
-                                 Watermark="None selected"
-                                 IsReadOnly="True"
-                                 IsEnabled="{Binding !IsUnlocking}"
-                                 FontSize="12" />
-                        <Button Grid.Column="1"
-                                Content="Browse"
-                                Margin="6 0 0 0"
+            <!-- Key file row -->
+            <Border Margin="0 8 0 0"
+                    Background="#2c2c2e"
+                    CornerRadius="8"
+                    Padding="10 8">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel Grid.Column="0" Spacing="1" VerticalAlignment="Center">
+                        <TextBlock Text="Key file"
+                                   FontSize="11"
+                                   Foreground="#636366" />
+                        <TextBlock Text="{Binding KeyFilePath, TargetNullValue='None selected'}"
+                                   FontSize="12"
+                                   Foreground="#98989d"
+                                   TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                        <Button Content="Choose"
+                                Classes="ghost"
                                 Command="{Binding BrowseKeyFileCommand}"
-                                IsEnabled="{Binding !IsUnlocking}"
-                                FontSize="12" />
-                        <Button Grid.Column="2"
-                                Content="✕"
-                                Margin="4 0 0 0"
+                                IsEnabled="{Binding !IsUnlocking}" />
+                        <Button Content="✕"
+                                Classes="ghost"
                                 Command="{Binding ClearKeyFileCommand}"
-                                IsEnabled="{Binding KeyFilePath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                                FontSize="12" />
-                    </Grid>
-                </StackPanel>
+                                IsVisible="{Binding KeyFilePath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
 
-                <Button Content="{Binding UnlockButtonText}"
-                        Command="{Binding UnlockCommand}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Center"
-                        FontSize="15"
-                        FontWeight="SemiBold"
-                        Padding="0 10"
-                        Margin="0 4 0 0"
-                        Background="#e94560"
-                        Foreground="White"
-                        CornerRadius="8" />
+            <!-- Error message -->
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Foreground="#ff453a"
+                       FontSize="12"
+                       HorizontalAlignment="Center"
+                       TextWrapping="Wrap"
+                       Margin="0 12 0 0"
+                       IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
 
-                <TextBlock Text="{Binding ErrorMessage}"
-                           Foreground="#e94560"
-                           IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                           HorizontalAlignment="Center"
-                           TextWrapping="Wrap"
-                           FontSize="12"
-                           Margin="0 -4 0 0" />
+            <!-- Unlock button -->
+            <Button Content="{Binding UnlockButtonText}"
+                    Classes="primary"
+                    Command="{Binding UnlockCommand}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    FontSize="14"
+                    Height="36"
+                    Margin="0 16 0 0" />
 
-            </StackPanel>
-        </Border>
+        </StackPanel>
     </Grid>
 </UserControl>
