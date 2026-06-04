@@ -79,14 +79,14 @@
 
         <!-- ── Button.toolbar — small titlebar action ────────────── -->
         <Style Selector="Button.toolbar">
-            <Setter Property="Background" Value="#ffffff14" />
-            <Setter Property="Foreground" Value="#ebebf5cc" />
+            <Setter Property="Background" Value="#14ffffff" />
+            <Setter Property="Foreground" Value="#ccebebf5" />
             <Setter Property="CornerRadius" Value="6" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="Padding" Value="10 4" />
         </Style>
         <Style Selector="Button.toolbar:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="#ffffff24" />
+            <Setter Property="Background" Value="#24ffffff" />
         </Style>
 
         <!-- ── ProgressBar ────────────────────────────────────────── -->

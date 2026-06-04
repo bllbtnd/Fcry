@@ -34,8 +34,8 @@
                             Spacing="8"
                             VerticalAlignment="Center">
 
-                    <Border Background="#ff453a1a"
-                            BorderBrush="#ff453a55"
+                    <Border Background="#1aff453a"
+                            BorderBrush="#55ff453a"
                             BorderThickness="1"
                             CornerRadius="10"
                             Padding="8 3"
