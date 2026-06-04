@@ -34,7 +34,7 @@ public static class FileEncryptor
         IProgress<double>? progress = null,
         CancellationToken cancellationToken = default)
     {
-        var tempZip = Path.GetTempFileName();
+        var tempZip = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".zip");
         try
         {
             await Task.Run(() =>
