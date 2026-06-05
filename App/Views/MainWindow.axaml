@@ -9,7 +9,8 @@
         Height="540"
         MinWidth="580"
         MinHeight="440"
-        Background="#1c1c1e">
+        Background="#1c1c1e"
+        Icon="avares://Fcry/Assets/icon.png">
 
     <Window.KeyBindings>
         <KeyBinding Gesture="Meta+L" Command="{Binding LockCommand}" />
