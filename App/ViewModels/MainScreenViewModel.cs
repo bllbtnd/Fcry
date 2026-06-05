@@ -246,10 +246,7 @@ public sealed partial class MainScreenViewModel : ViewModelBase, IDisposable
     {
         try
         {
-            if (item.IsFolder)
-                Directory.Delete(item.FilePath, recursive: true);
-            else
-                File.Delete(item.FilePath);
+            SecureDelete.Delete(item.FilePath, item.IsFolder);
         }
         catch
         {
