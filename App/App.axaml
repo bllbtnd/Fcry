@@ -112,5 +112,38 @@
             <Setter Property="Background" Value="Transparent" />
         </Style>
 
+        <Style Selector="ToggleButton.toggle">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border x:Name="track"
+                            Width="38" Height="22"
+                            CornerRadius="11"
+                            Background="{DynamicResource AppElevated}">
+                        <Border.Transitions>
+                            <Transitions>
+                                <BrushTransition Property="Background" Duration="0:0:0.15" />
+                            </Transitions>
+                        </Border.Transitions>
+                        <Border x:Name="knob"
+                                Width="18" Height="18"
+                                CornerRadius="9"
+                                Margin="2 0"
+                                HorizontalAlignment="Left"
+                                Background="White" />
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="ToggleButton.toggle:checked /template/ Border#track">
+            <Setter Property="Background" Value="#0a84ff" />
+        </Style>
+        <Style Selector="ToggleButton.toggle:checked /template/ Border#knob">
+            <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>
+        <Style Selector="ToggleButton.toggle:pointerover /template/ Border#track">
+            <Setter Property="Opacity" Value="0.85" />
+        </Style>
+
     </Application.Styles>
 </Application>

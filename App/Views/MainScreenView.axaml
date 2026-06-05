@@ -60,7 +60,7 @@
                    VerticalAlignment="Bottom" />
 
         <!-- Content -->
-        <Grid Grid.Row="1" RowDefinitions="*,Auto,Auto,Auto" Margin="16 12 16 0">
+        <Grid Grid.Row="1" RowDefinitions="*,Auto,Auto" Margin="16 12 16 0">
 
             <!-- Drop zone -->
             <Panel Grid.Row="0" Margin="0 0 0 10">
@@ -101,7 +101,7 @@
             </Panel>
 
             <!-- Action bar -->
-            <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,*,Auto" Margin="2 0 2 10">
+                <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,Auto,*,Auto" Margin="2 0 2 10">
                 <Button Grid.Column="0"
                         Content="Add Files…"
                         Command="{Binding AddFilesCommand}"
@@ -114,7 +114,23 @@
                         Padding="10 5"
                         Margin="6 0 0 0" />
 
-                <StackPanel Grid.Column="2"
+                <Grid Grid.Column="2"
+                      ColumnDefinitions="Auto,Auto"
+                      Margin="10 0 0 0"
+                      VerticalAlignment="Center">
+                    <TextBlock Grid.Column="0"
+                           Text="Delete originals"
+                           FontSize="12"
+                           Foreground="{DynamicResource AppLabelSecondary}"
+                           VerticalAlignment="Center" />
+                    <ToggleButton Grid.Column="1"
+                          Classes="toggle"
+                          IsChecked="{Binding DeleteOriginalAfter}"
+                          Margin="8 0 0 0"
+                          VerticalAlignment="Center" />
+                </Grid>
+
+                <StackPanel Grid.Column="3"
                             Orientation="Horizontal"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
@@ -142,7 +158,7 @@
                     </Button>
                 </StackPanel>
 
-                <Button Grid.Column="3"
+                <Button Grid.Column="4"
                         Content="Cancel"
                         Command="{Binding CancelProcessingCommand}"
                         IsVisible="{Binding IsProcessing}"
@@ -153,16 +169,8 @@
                         Margin="6 0 0 0" />
             </Grid>
 
-            <!-- Options -->
-            <CheckBox Grid.Row="2"
-                      Content="Delete the original after encrypting or decrypting"
-                      IsChecked="{Binding DeleteOriginalAfter}"
-                      FontSize="12"
-                      Foreground="{DynamicResource AppLabelSecondary}"
-                      Margin="2 0 2 10" />
-
             <!-- Queue -->
-            <Grid Grid.Row="3" RowDefinitions="Auto,Auto" IsVisible="{Binding HasFiles}">
+                        <Grid Grid.Row="2" RowDefinitions="Auto,Auto" IsVisible="{Binding HasFiles}">
                 <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="4 0 4 6">
                     <TextBlock Grid.Column="0"
                                Text="QUEUE"
