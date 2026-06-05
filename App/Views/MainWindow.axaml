@@ -9,11 +9,12 @@
         Height="540"
         MinWidth="580"
         MinHeight="440"
-        Background="#1c1c1e"
-        Icon="avares://Fcry/Assets/icon.ico"
-        ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
-        ExtendClientAreaTitleBarHeightHint="-1">
+        Background="#1c1c1e">
+
+    <Window.KeyBindings>
+        <KeyBinding Gesture="Meta+L" Command="{Binding LockCommand}" />
+        <KeyBinding Gesture="Ctrl+L" Command="{Binding LockCommand}" />
+    </Window.KeyBindings>
 
     <ContentControl Content="{Binding CurrentView}">
         <ContentControl.DataTemplates>

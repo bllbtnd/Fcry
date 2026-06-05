@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Avalonia.Platform.Storage;
+using Fcry.App.Services;
 using Fcry.App.ViewModels;
 using Fcry.App.Views;
 using Fcry.Core.Crypto;
@@ -19,21 +19,12 @@ public partial class App : Application
         {
             var config = ConfigManager.LoadOrCreate();
             var keyManager = new MasterKeyManager();
+            var mainWindow = new MainWindow();
+            var picker = new AvaloniaPickerService(mainWindow);
+            var mainVm = new MainWindowViewModel(keyManager, config, picker);
 
-            async Task<string?> PickKeyFile()
-            {
-                var window = desktop.MainWindow;
-                if (window == null) return null;
-                var files = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-                {
-                    Title = "Select Key File",
-                    AllowMultiple = false
-                });
-                return files.Count > 0 ? files[0].Path.LocalPath : null;
-            }
-
-            var mainVm = new MainWindowViewModel(keyManager, config, PickKeyFile);
-            desktop.MainWindow = new MainWindow { DataContext = mainVm };
+            mainWindow.DataContext = mainVm;
+            desktop.MainWindow = mainWindow;
         }
 
         base.OnFrameworkInitializationCompleted();
