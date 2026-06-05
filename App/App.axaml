@@ -1,20 +1,39 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Fcry.App.App"
-             RequestedThemeVariant="Dark">
+             RequestedThemeVariant="Default">
 
     <Application.Resources>
-        <SolidColorBrush x:Key="AppBg" Color="#1c1c1e"/>
-        <SolidColorBrush x:Key="AppSurface" Color="#2c2c2e"/>
-        <SolidColorBrush x:Key="AppElevated" Color="#3a3a3c"/>
-        <SolidColorBrush x:Key="AppSeparator" Color="#38383a"/>
-        <SolidColorBrush x:Key="AppLabel" Color="#ffffff"/>
-        <SolidColorBrush x:Key="AppLabelSecondary" Color="#98989d"/>
-        <SolidColorBrush x:Key="AppLabelTertiary" Color="#636366"/>
-        <SolidColorBrush x:Key="AppInputBg" Color="#3a3a3c"/>
-        <SolidColorBrush x:Key="AppToolbarBtn" Color="#14ffffff"/>
-        <SolidColorBrush x:Key="AppToolbarBtnHover" Color="#24ffffff"/>
-        <SolidColorBrush x:Key="AppDropZoneBorder" Color="#48484a"/>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="AppBg" Color="#f5f5f7"/>
+                    <SolidColorBrush x:Key="AppSurface" Color="#ffffff"/>
+                    <SolidColorBrush x:Key="AppElevated" Color="#efeff4"/>
+                    <SolidColorBrush x:Key="AppSeparator" Color="#d1d1d6"/>
+                    <SolidColorBrush x:Key="AppLabel" Color="#1c1c1e"/>
+                    <SolidColorBrush x:Key="AppLabelSecondary" Color="#3c3c43"/>
+                    <SolidColorBrush x:Key="AppLabelTertiary" Color="#6e6e73"/>
+                    <SolidColorBrush x:Key="AppInputBg" Color="#ffffff"/>
+                    <SolidColorBrush x:Key="AppToolbarBtn" Color="#14000000"/>
+                    <SolidColorBrush x:Key="AppToolbarBtnHover" Color="#24000000"/>
+                    <SolidColorBrush x:Key="AppDropZoneBorder" Color="#c7c7cc"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="AppBg" Color="#1c1c1e"/>
+                    <SolidColorBrush x:Key="AppSurface" Color="#2c2c2e"/>
+                    <SolidColorBrush x:Key="AppElevated" Color="#3a3a3c"/>
+                    <SolidColorBrush x:Key="AppSeparator" Color="#38383a"/>
+                    <SolidColorBrush x:Key="AppLabel" Color="#ffffff"/>
+                    <SolidColorBrush x:Key="AppLabelSecondary" Color="#98989d"/>
+                    <SolidColorBrush x:Key="AppLabelTertiary" Color="#636366"/>
+                    <SolidColorBrush x:Key="AppInputBg" Color="#3a3a3c"/>
+                    <SolidColorBrush x:Key="AppToolbarBtn" Color="#14ffffff"/>
+                    <SolidColorBrush x:Key="AppToolbarBtnHover" Color="#24ffffff"/>
+                    <SolidColorBrush x:Key="AppDropZoneBorder" Color="#48484a"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 
     <Application.Styles>
