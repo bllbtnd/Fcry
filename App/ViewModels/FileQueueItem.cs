@@ -22,8 +22,8 @@ public sealed partial class FileQueueItem : ObservableObject
 
     public string OperationIcon => Operation switch
     {
-        FileOperation.Encrypt => IsFolder ? "📁" : "🔒",
-        _ => "🔓"
+        FileOperation.Encrypt => IsFolder ? "folder" : "lock",
+        _ => "unlock"
     };
 
     public string StatusText => Status switch

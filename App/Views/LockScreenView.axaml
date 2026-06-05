@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Fcry.App.ViewModels"
+             xmlns:app="using:Fcry.App"
              x:Class="Fcry.App.Views.LockScreenView"
              x:DataType="vm:LockScreenViewModel"
              Background="{DynamicResource AppBg}">
@@ -11,10 +12,12 @@
                     VerticalAlignment="Center"
                     Spacing="0">
 
-            <TextBlock Text="🔐"
-                       FontSize="44"
-                       HorizontalAlignment="Center"
-                       Margin="0 0 0 16" />
+            <PathIcon Data="{x:Static app:Icons.Shield}"
+                      Width="48"
+                      Height="48"
+                      Foreground="#0a84ff"
+                      HorizontalAlignment="Center"
+                      Margin="0 0 0 16" />
 
             <TextBlock Text="Fcry"
                        FontSize="22"
@@ -54,10 +57,11 @@
                                 Classes="ghost"
                                 Command="{Binding BrowseKeyFileCommand}"
                                 IsEnabled="{Binding !IsUnlocking}" />
-                        <Button Content="✕"
-                                Classes="ghost"
+                        <Button Classes="ghost"
                                 Command="{Binding ClearKeyFileCommand}"
-                                IsVisible="{Binding KeyFilePath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                                IsVisible="{Binding KeyFilePath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                            <PathIcon Data="{x:Static app:Icons.Close}" Width="9" Height="9" />
+                        </Button>
                     </StackPanel>
                 </Grid>
             </Border>

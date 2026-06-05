@@ -1,5 +1,6 @@
 using Avalonia.Data.Converters;
 using Avalonia.Media;
+using Fcry.App;
 using Fcry.App.ViewModels;
 
 namespace Fcry.App.Converters;
@@ -20,4 +21,13 @@ public static class AppConverters
 
     public static readonly FuncValueConverter<FileStatus, bool> StatusIsProcessing =
         new(status => status == FileStatus.Processing);
+
+    public static readonly FuncValueConverter<string, Geometry?> IconKeyToGeometry =
+        new(key => key switch
+        {
+            "lock" => Icons.Lock,
+            "unlock" => Icons.Unlock,
+            "folder" => Icons.Folder,
+            _ => null
+        });
 }

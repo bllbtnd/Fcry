@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Fcry.App.ViewModels"
              xmlns:conv="using:Fcry.App.Converters"
+             xmlns:app="using:Fcry.App"
              x:Class="Fcry.App.Views.MainScreenView"
              x:DataType="vm:MainScreenViewModel"
              Background="{DynamicResource AppBg}">
@@ -82,11 +83,11 @@
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             Spacing="8">
-                    <TextBlock Text="↓"
-                               FontSize="32"
-                               FontWeight="Thin"
-                               HorizontalAlignment="Center"
-                               Foreground="{DynamicResource AppElevated}" />
+                    <PathIcon Data="{x:Static app:Icons.TrayDown}"
+                              Width="36"
+                              Height="36"
+                              HorizontalAlignment="Center"
+                              Foreground="{DynamicResource AppElevated}" />
                     <TextBlock Text="Drop files or folders"
                                FontSize="14"
                                FontWeight="Medium"
@@ -133,12 +134,12 @@
                             Command="{Binding ChangeOutputDirectoryCommand}"
                             FontSize="11"
                             Padding="6 2" />
-                    <Button Content="✕"
-                            Classes="ghost"
+                    <Button Classes="ghost"
                             Command="{Binding ClearOutputDirectoryCommand}"
-                            FontSize="11"
                             Padding="4 2"
-                            IsVisible="{Binding OutputDirectory, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                            IsVisible="{Binding OutputDirectory, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <PathIcon Data="{x:Static app:Icons.Close}" Width="9" Height="9" />
+                    </Button>
                 </StackPanel>
 
                 <Button Grid.Column="3"
@@ -180,10 +181,13 @@
                                             BorderThickness="0 0 0 1"
                                             Padding="14 0">
                                         <Grid Height="44" ColumnDefinitions="22,*,Auto,Auto">
-                                            <TextBlock Grid.Column="0"
-                                                       Text="{Binding OperationIcon}"
-                                                       FontSize="14"
-                                                       VerticalAlignment="Center" />
+                                            <PathIcon Grid.Column="0"
+                                                      Data="{Binding OperationIcon, Converter={x:Static conv:AppConverters.IconKeyToGeometry}}"
+                                                      Width="16"
+                                                      Height="16"
+                                                      HorizontalAlignment="Left"
+                                                      Foreground="{DynamicResource AppLabelSecondary}"
+                                                      VerticalAlignment="Center" />
                                             <StackPanel Grid.Column="1"
                                                         Spacing="4"
                                                         VerticalAlignment="Center"
