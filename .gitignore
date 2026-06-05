@@ -3,3 +3,6 @@ obj/
 .vs/
 .idea/
 *.user
+.DS_Store
+build/publish-*/
+build/Fcry.app/
