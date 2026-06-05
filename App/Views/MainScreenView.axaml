@@ -63,14 +63,18 @@
         <Grid Grid.Row="1" RowDefinitions="*,Auto,Auto" Margin="16 12 16 0">
 
             <!-- Drop zone -->
-            <Panel Grid.Row="0" Margin="0 0 0 10">
+            <Panel x:Name="DropZone"
+                   Grid.Row="0"
+                   Margin="0 0 0 10"
+                   Background="Transparent">
                 <Rectangle x:Name="DashNormal"
                            Stroke="{DynamicResource AppDropZoneBorder}"
                            StrokeThickness="1"
                            StrokeDashArray="6,3"
                            RadiusX="12"
                            RadiusY="12"
-                           Fill="Transparent" />
+                           Fill="Transparent"
+                           IsHitTestVisible="False" />
                 <Rectangle x:Name="DashHover"
                            Stroke="#0a84ff"
                            StrokeThickness="1.5"
@@ -78,11 +82,13 @@
                            RadiusX="12"
                            RadiusY="12"
                            Fill="#0c0a84ff"
-                           IsVisible="False" />
-                <StackPanel x:Name="DropZone"
+                           IsVisible="False"
+                           IsHitTestVisible="False" />
+                <StackPanel
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
-                            Spacing="8">
+                            Spacing="8"
+                            IsHitTestVisible="False">
                     <PathIcon Data="{x:Static app:Icons.TrayDown}"
                               Width="36"
                               Height="36"
