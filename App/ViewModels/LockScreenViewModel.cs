@@ -28,6 +28,15 @@ public sealed partial class LockScreenViewModel : ViewModelBase
 
     public string UnlockButtonText => IsUnlocking ? "Unlocking..." : "Unlock";
 
+    public string Version
+    {
+        get
+        {
+            var v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            return v != null ? $"v{v.Major}.{v.Minor}" : "v1.0";
+        }
+    }
+
     public event EventHandler? UnlockSucceeded;
 
     public LockScreenViewModel(MasterKeyManager keyManager, AppConfig config, IPickerService picker)
