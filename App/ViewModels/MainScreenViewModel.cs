@@ -25,6 +25,7 @@ public sealed partial class MainScreenViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private bool _isDragOver;
     [ObservableProperty] private bool _isProcessing;
     [ObservableProperty] private string? _outputDirectory;
+    [ObservableProperty] private bool _deleteOriginalAfter;
 
     public bool HasFiles => FileQueue.Count > 0;
 
@@ -215,6 +216,9 @@ public sealed partial class MainScreenViewModel : ViewModelBase, IDisposable
                 item.Progress = 100;
                 item.Status = FileStatus.Done;
                 item.OutputPath = result.OutputPath;
+
+                if (DeleteOriginalAfter)
+                    DeleteSource(item);
             }
             else
             {
@@ -235,6 +239,20 @@ public sealed partial class MainScreenViewModel : ViewModelBase, IDisposable
         finally
         {
             CryptographicOperations.ZeroMemory(masterKeyBytes);
+        }
+    }
+
+    private static void DeleteSource(FileQueueItem item)
+    {
+        try
+        {
+            if (item.IsFolder)
+                Directory.Delete(item.FilePath, recursive: true);
+            else
+                File.Delete(item.FilePath);
+        }
+        catch
+        {
         }
     }
 
