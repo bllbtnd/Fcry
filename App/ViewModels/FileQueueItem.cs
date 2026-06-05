@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace Fcry.App.ViewModels;
 
@@ -13,6 +15,7 @@ public sealed partial class FileQueueItem : ObservableObject
     [ObservableProperty] private FileStatus _status = FileStatus.Pending;
     [ObservableProperty] private double _progress;
     [ObservableProperty] private string? _error;
+    [ObservableProperty] private string? _outputPath;
 
     public string FilePath { get; init; } = string.Empty;
     public bool IsFolder { get; init; }
@@ -32,7 +35,35 @@ public sealed partial class FileQueueItem : ObservableObject
         _ => string.Empty
     };
 
-    partial void OnStatusChanged(FileStatus value) => OnPropertyChanged(nameof(StatusText));
+    [RelayCommand(CanExecute = nameof(CanReveal))]
+    private void RevealInExplorer()
+    {
+        if (OutputPath == null) return;
+        try
+        {
+            if (OperatingSystem.IsMacOS())
+                Process.Start("open", $"-R \"{OutputPath}\"");
+            else if (OperatingSystem.IsWindows())
+                Process.Start(new ProcessStartInfo("explorer.exe", $"/select,\"{OutputPath}\"")
+                    { UseShellExecute = true });
+            else
+                Process.Start(new ProcessStartInfo("xdg-open", Path.GetDirectoryName(OutputPath) ?? OutputPath)
+                    { UseShellExecute = true });
+        }
+        catch { }
+    }
+
+    private bool CanReveal() => OutputPath != null && Status == FileStatus.Done;
+
+    partial void OnStatusChanged(FileStatus value)
+    {
+        OnPropertyChanged(nameof(StatusText));
+        RevealInExplorerCommand.NotifyCanExecuteChanged();
+    }
+
     partial void OnProgressChanged(double value) => OnPropertyChanged(nameof(StatusText));
     partial void OnErrorChanged(string? value) => OnPropertyChanged(nameof(StatusText));
+
+    partial void OnOutputPathChanged(string? value) =>
+        RevealInExplorerCommand.NotifyCanExecuteChanged();
 }

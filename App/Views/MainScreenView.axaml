@@ -4,100 +4,80 @@
              xmlns:conv="using:Fcry.App.Converters"
              x:Class="Fcry.App.Views.MainScreenView"
              x:DataType="vm:MainScreenViewModel"
-             Background="#1c1c1e">
+             Background="{DynamicResource AppBg}">
 
-    <Grid RowDefinitions="52,*,28">
+    <Grid RowDefinitions="48,*,28">
 
-        <!-- ── Titlebar row (52 px — matches macOS toolbar height) ── -->
-        <!-- Left 80 px stays empty so traffic-light buttons are never covered -->
-        <Panel Grid.Row="0"
-               x:Name="TitleBar"
-               Background="Transparent">
-            <Grid ColumnDefinitions="80,*,Auto,16">
+        <!-- Toolbar -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto,16" Background="{DynamicResource AppBg}">
 
-                <!-- traffic-light clearance -->
-                <Panel Grid.Column="0" />
+            <TextBlock Grid.Column="0"
+                       Text="Fcry"
+                       FontSize="13"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource AppLabel}"
+                       VerticalAlignment="Center"
+                       Margin="16 0"
+                       Opacity="0.85" />
 
-                <!-- window title — centre of remaining space; also the drag region -->
-                <TextBlock Grid.Column="1"
-                           Text="Fcry"
-                           FontSize="13"
-                           FontWeight="SemiBold"
-                           Foreground="#ebebf5"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Opacity="0.85" />
-
-                <!-- countdown + lock -->
-                <StackPanel Grid.Column="2"
-                            Orientation="Horizontal"
-                            Spacing="8"
-                            VerticalAlignment="Center">
-
-                    <Border Background="#1aff453a"
-                            BorderBrush="#55ff453a"
-                            BorderThickness="1"
-                            CornerRadius="10"
-                            Padding="8 3"
-                            IsVisible="{Binding CountdownSeconds, Converter={x:Static ObjectConverters.IsNotNull}}">
-                        <StackPanel Orientation="Horizontal" Spacing="3">
-                            <TextBlock Text="Lock in"
-                                       FontSize="11"
-                                       Foreground="#ff6b6b"
-                                       VerticalAlignment="Center" />
-                            <TextBlock Text="{Binding CountdownSeconds}"
-                                       FontSize="11"
-                                       FontWeight="SemiBold"
-                                       Foreground="#ff453a"
-                                       VerticalAlignment="Center" />
-                            <TextBlock Text="s"
-                                       FontSize="11"
-                                       Foreground="#ff6b6b"
-                                       VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Border>
-
-                    <Button Classes="toolbar"
-                            Content="Lock"
-                            Command="{Binding LockCommand}" />
+            <Border Grid.Column="1"
+                    Background="#1aff453a"
+                    BorderBrush="#55ff453a"
+                    BorderThickness="1"
+                    CornerRadius="10"
+                    Padding="8 3"
+                    Margin="0 0 8 0"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding CountdownSeconds, Converter={x:Static ObjectConverters.IsNotNull}}">
+                <StackPanel Orientation="Horizontal" Spacing="3">
+                    <TextBlock Text="Lock in"
+                               FontSize="11"
+                               Foreground="#ff6b6b"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding CountdownSeconds}"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="#ff453a"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="s"
+                               FontSize="11"
+                               Foreground="#ff6b6b"
+                               VerticalAlignment="Center" />
                 </StackPanel>
+            </Border>
 
-            </Grid>
-        </Panel>
+            <Button Grid.Column="2"
+                    Classes="toolbar"
+                    Content="Lock"
+                    Command="{Binding LockCommand}"
+                    VerticalAlignment="Center" />
+        </Grid>
 
-        <!-- thin separator under toolbar -->
         <Rectangle Grid.Row="0"
-                   Fill="#38383a"
+                   Fill="{DynamicResource AppSeparator}"
                    Height="1"
                    VerticalAlignment="Bottom" />
 
-        <!-- ── Content area ─────────────────────────────────────── -->
-        <Grid Grid.Row="1"
-              RowDefinitions="*,Auto"
-              Margin="16 12 16 0">
+        <!-- Content -->
+        <Grid Grid.Row="1" RowDefinitions="*,Auto,Auto" Margin="16 12 16 0">
 
-            <!-- Drop zone with dashed border (Rectangle supports StrokeDashArray) -->
-            <Panel Grid.Row="0" Margin="0 0 0 12">
-
-                <!-- Normal dashed border -->
+            <!-- Drop zone -->
+            <Panel Grid.Row="0" Margin="0 0 0 10">
                 <Rectangle x:Name="DashNormal"
-                           Stroke="#48484a"
+                           Stroke="{DynamicResource AppDropZoneBorder}"
                            StrokeThickness="1"
                            StrokeDashArray="6,3"
                            RadiusX="12"
                            RadiusY="12"
                            Fill="Transparent" />
-
-                <!-- Hover dashed border (toggled in code-behind) -->
                 <Rectangle x:Name="DashHover"
                            Stroke="#0a84ff"
                            StrokeThickness="1.5"
                            StrokeDashArray="6,3"
                            RadiusX="12"
                            RadiusY="12"
-                           Fill="#0a84ff0c"
+                           Fill="#0c0a84ff"
                            IsVisible="False" />
-
                 <StackPanel x:Name="DropZone"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
@@ -106,32 +86,81 @@
                                FontSize="32"
                                FontWeight="Thin"
                                HorizontalAlignment="Center"
-                               Foreground="#3a3a3c" />
+                               Foreground="{DynamicResource AppElevated}" />
                     <TextBlock Text="Drop files or folders"
                                FontSize="14"
                                FontWeight="Medium"
-                               Foreground="#48484a"
+                               Foreground="{DynamicResource AppLabelTertiary}"
                                HorizontalAlignment="Center" />
                     <TextBlock Text=".fcry items are decrypted automatically"
                                FontSize="11"
-                               Foreground="#3a3a3c"
+                               Foreground="{DynamicResource AppSeparator}"
                                HorizontalAlignment="Center" />
                 </StackPanel>
             </Panel>
 
-            <!-- ── Queue ────────────────────────────────────────── -->
-            <Grid Grid.Row="1"
-                  RowDefinitions="Auto,Auto"
-                  IsVisible="{Binding HasFiles}">
+            <!-- Action bar -->
+            <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,*,Auto" Margin="2 0 2 10">
+                <Button Grid.Column="0"
+                        Content="Add Files…"
+                        Command="{Binding AddFilesCommand}"
+                        FontSize="12"
+                        Padding="10 5" />
+                <Button Grid.Column="1"
+                        Content="Add Folder…"
+                        Command="{Binding AddFolderCommand}"
+                        FontSize="12"
+                        Padding="10 5"
+                        Margin="6 0 0 0" />
 
-                <!-- Queue header -->
-                <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="4 0 4 4">
-                    <TextBlock Grid.Column="0"
-                               Text="Queue"
+                <StackPanel Grid.Column="2"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Spacing="4">
+                    <TextBlock Text="Output:"
                                FontSize="11"
+                               Foreground="{DynamicResource AppLabelTertiary}"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding OutputDirectoryDisplay}"
+                               FontSize="11"
+                               Foreground="{DynamicResource AppLabelSecondary}"
+                               VerticalAlignment="Center"
+                               MaxWidth="160"
+                               TextTrimming="CharacterEllipsis" />
+                    <Button Content="Change"
+                            Classes="ghost"
+                            Command="{Binding ChangeOutputDirectoryCommand}"
+                            FontSize="11"
+                            Padding="6 2" />
+                    <Button Content="✕"
+                            Classes="ghost"
+                            Command="{Binding ClearOutputDirectoryCommand}"
+                            FontSize="11"
+                            Padding="4 2"
+                            IsVisible="{Binding OutputDirectory, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                </StackPanel>
+
+                <Button Grid.Column="3"
+                        Content="Cancel"
+                        Command="{Binding CancelProcessingCommand}"
+                        IsVisible="{Binding IsProcessing}"
+                        Background="#1aff453a"
+                        Foreground="#ff453a"
+                        FontSize="12"
+                        Padding="10 5"
+                        Margin="6 0 0 0" />
+            </Grid>
+
+            <!-- Queue -->
+            <Grid Grid.Row="2" RowDefinitions="Auto,Auto" IsVisible="{Binding HasFiles}">
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="4 0 4 6">
+                    <TextBlock Grid.Column="0"
+                               Text="QUEUE"
+                               FontSize="10"
                                FontWeight="SemiBold"
-                               Foreground="#636366"
-                               LetterSpacing="0.5"
+                               Foreground="{DynamicResource AppLabelTertiary}"
+                               LetterSpacing="1"
                                VerticalAlignment="Center" />
                     <Button Grid.Column="1"
                             Content="Clear done"
@@ -139,47 +168,48 @@
                             Command="{Binding ClearQueueCommand}" />
                 </Grid>
 
-                <!-- Queue rows -->
                 <Border Grid.Row="1"
-                        Background="#2c2c2e"
+                        Background="{DynamicResource AppSurface}"
                         CornerRadius="10"
                         ClipToBounds="True">
                     <ScrollViewer MaxHeight="200">
                         <ItemsControl ItemsSource="{Binding FileQueue}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate x:DataType="vm:FileQueueItem">
-                                    <Border BorderBrush="#38383a"
+                                    <Border BorderBrush="{DynamicResource AppSeparator}"
                                             BorderThickness="0 0 0 1"
                                             Padding="14 0">
-                                        <Grid Height="44" ColumnDefinitions="22,*,Auto">
-
-                                            <!-- operation icon -->
+                                        <Grid Height="44" ColumnDefinitions="22,*,Auto,Auto">
                                             <TextBlock Grid.Column="0"
                                                        Text="{Binding OperationIcon}"
                                                        FontSize="14"
                                                        VerticalAlignment="Center" />
-
-                                            <!-- filename + progress bar -->
                                             <StackPanel Grid.Column="1"
                                                         Spacing="4"
                                                         VerticalAlignment="Center"
                                                         Margin="8 0">
                                                 <TextBlock Text="{Binding FileName}"
                                                            FontSize="13"
-                                                           Foreground="#ffffff"
+                                                           Foreground="{DynamicResource AppLabel}"
                                                            TextTrimming="CharacterEllipsis" />
                                                 <ProgressBar Value="{Binding Progress}"
                                                              Minimum="0"
                                                              Maximum="100"
                                                              IsVisible="{Binding Status, Converter={x:Static conv:AppConverters.StatusIsProcessing}}" />
                                             </StackPanel>
-
-                                            <!-- status label -->
                                             <TextBlock Grid.Column="2"
                                                        Text="{Binding StatusText}"
                                                        FontSize="11"
                                                        VerticalAlignment="Center"
                                                        Foreground="{Binding Status, Converter={x:Static conv:AppConverters.StatusToBrush}}" />
+                                            <Button Grid.Column="3"
+                                                    Content="Show"
+                                                    Classes="ghost"
+                                                    Command="{Binding RevealInExplorerCommand}"
+                                                    IsVisible="{Binding OutputPath, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                                    FontSize="11"
+                                                    Padding="8 2"
+                                                    Margin="4 0 0 0" />
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -187,18 +217,17 @@
                         </ItemsControl>
                     </ScrollViewer>
                 </Border>
-
             </Grid>
         </Grid>
 
-        <!-- ── Status bar ───────────────────────────────────────── -->
+        <!-- Status bar -->
         <Border Grid.Row="2"
-                BorderBrush="#38383a"
+                BorderBrush="{DynamicResource AppSeparator}"
                 BorderThickness="0 1 0 0"
                 Padding="20 0">
             <TextBlock Text="{Binding FileQueue.Count, StringFormat='{}{0} item(s) in queue'}"
                        FontSize="11"
-                       Foreground="#48484a"
+                       Foreground="{DynamicResource AppLabelTertiary}"
                        VerticalAlignment="Center" />
         </Border>
 

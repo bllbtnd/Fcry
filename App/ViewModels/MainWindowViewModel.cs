@@ -1,4 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Fcry.App.Services;
 using Fcry.Core.Crypto;
 using Fcry.Core.Models;
 
@@ -8,34 +10,42 @@ public sealed partial class MainWindowViewModel : ViewModelBase
 {
     private readonly MasterKeyManager _keyManager;
     private readonly AppConfig _config;
-    private readonly Func<Task<string?>> _pickKeyFile;
+    private readonly IPickerService _picker;
 
     [ObservableProperty] private ViewModelBase _currentView;
 
-    public MainWindowViewModel(MasterKeyManager keyManager, AppConfig config, Func<Task<string?>> pickKeyFile)
+    public MainWindowViewModel(MasterKeyManager keyManager, AppConfig config, IPickerService picker)
     {
         _keyManager = keyManager;
         _config = config;
-        _pickKeyFile = pickKeyFile;
+        _picker = picker;
         _currentView = CreateLockScreen();
     }
 
     public void ResetInactivity()
     {
-        if (CurrentView is MainScreenViewModel mainVm)
-            mainVm.ResetInactivityTimer();
+        if (CurrentView is MainScreenViewModel vm) vm.ResetInactivityTimer();
     }
+
+    public void RequestLock()
+    {
+        if (CurrentView is MainScreenViewModel)
+            OnLockRequested(this, EventArgs.Empty);
+    }
+
+    [RelayCommand]
+    private void Lock() => RequestLock();
 
     private LockScreenViewModel CreateLockScreen()
     {
-        var vm = new LockScreenViewModel(_keyManager, _config, _pickKeyFile);
+        var vm = new LockScreenViewModel(_keyManager, _config, _picker);
         vm.UnlockSucceeded += OnUnlockSucceeded;
         return vm;
     }
 
     private MainScreenViewModel CreateMainScreen()
     {
-        var vm = new MainScreenViewModel(_keyManager);
+        var vm = new MainScreenViewModel(_keyManager, _picker);
         vm.LockRequested += OnLockRequested;
         return vm;
     }

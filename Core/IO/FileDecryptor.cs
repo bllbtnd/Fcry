@@ -71,23 +71,26 @@ public static class FileDecryptor
 
                 progress?.Report(0.8);
 
+                string outputPath;
                 if (storedName.EndsWith('/'))
                 {
                     var folderName = storedName.TrimEnd('/');
-                    var folderDest = Path.Combine(destDirectory, folderName);
+                    var folderDest = PathHelper.FindAvailable(Path.Combine(destDirectory, folderName));
                     Directory.CreateDirectory(folderDest);
                     using var ms = new MemoryStream(plaintext);
                     using var archive = new ZipArchive(ms, ZipArchiveMode.Read);
                     archive.ExtractToDirectory(folderDest, overwriteFiles: true);
+                    outputPath = folderDest;
                 }
                 else
                 {
-                    var destPath = Path.Combine(destDirectory, storedName);
-                    await File.WriteAllBytesAsync(destPath, plaintext, cancellationToken);
+                    var fileDest = PathHelper.FindAvailable(Path.Combine(destDirectory, storedName));
+                    await File.WriteAllBytesAsync(fileDest, plaintext, cancellationToken);
+                    outputPath = fileDest;
                 }
 
                 progress?.Report(1.0);
-                return CryptoResult.Ok();
+                return CryptoResult.Ok(outputPath);
             }
             finally
             {

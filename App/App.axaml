@@ -2,22 +2,35 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Fcry.App.App"
              RequestedThemeVariant="Dark">
+
+    <Application.Resources>
+        <SolidColorBrush x:Key="AppBg" Color="#1c1c1e"/>
+        <SolidColorBrush x:Key="AppSurface" Color="#2c2c2e"/>
+        <SolidColorBrush x:Key="AppElevated" Color="#3a3a3c"/>
+        <SolidColorBrush x:Key="AppSeparator" Color="#38383a"/>
+        <SolidColorBrush x:Key="AppLabel" Color="#ffffff"/>
+        <SolidColorBrush x:Key="AppLabelSecondary" Color="#98989d"/>
+        <SolidColorBrush x:Key="AppLabelTertiary" Color="#636366"/>
+        <SolidColorBrush x:Key="AppInputBg" Color="#3a3a3c"/>
+        <SolidColorBrush x:Key="AppToolbarBtn" Color="#14ffffff"/>
+        <SolidColorBrush x:Key="AppToolbarBtnHover" Color="#24ffffff"/>
+        <SolidColorBrush x:Key="AppDropZoneBorder" Color="#48484a"/>
+    </Application.Resources>
+
     <Application.Styles>
         <FluentTheme />
 
-        <!-- ── Typography ──────────────────────────────────────────── -->
         <Style Selector="TextBlock">
-            <Setter Property="Foreground" Value="#ebebf5" />
+            <Setter Property="Foreground" Value="{DynamicResource AppLabel}" />
             <Setter Property="FontSize" Value="13" />
         </Style>
 
-        <!-- ── TextBox — macOS NSTextField style ──────────────────── -->
         <Style Selector="TextBox">
-            <Setter Property="Background" Value="#3a3a3c" />
+            <Setter Property="Background" Value="{DynamicResource AppInputBg}" />
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="CornerRadius" Value="8" />
-            <Setter Property="Foreground" Value="#ffffff" />
+            <Setter Property="Foreground" Value="{DynamicResource AppLabel}" />
             <Setter Property="CaretBrush" Value="#0a84ff" />
             <Setter Property="SelectionBrush" Value="#2e6de6" />
             <Setter Property="Padding" Value="10 8" />
@@ -25,30 +38,28 @@
             <Setter Property="MinHeight" Value="34" />
         </Style>
         <Style Selector="TextBox:focus">
-            <Setter Property="Background" Value="#2c2c2e" />
+            <Setter Property="Background" Value="{DynamicResource AppSurface}" />
             <Setter Property="BorderBrush" Value="#0a84ff" />
             <Setter Property="BorderThickness" Value="1.5" />
         </Style>
-        <!-- ── Button base ────────────────────────────────────────── -->
+
         <Style Selector="Button">
             <Setter Property="CornerRadius" Value="8" />
             <Setter Property="FontSize" Value="13" />
             <Setter Property="Padding" Value="14 7" />
-            <Setter Property="Background" Value="#3a3a3c" />
-            <Setter Property="Foreground" Value="#ebebf5" />
+            <Setter Property="Background" Value="{DynamicResource AppElevated}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppLabel}" />
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Cursor" Value="Hand" />
         </Style>
         <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="#48484a" />
+            <Setter Property="Opacity" Value="0.8" />
         </Style>
         <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="#545456" />
-            <Setter Property="Opacity" Value="0.85" />
+            <Setter Property="Opacity" Value="0.6" />
         </Style>
 
-        <!-- ── Button.primary — macOS blue ───────────────────────── -->
         <Style Selector="Button.primary">
             <Setter Property="Background" Value="#0a84ff" />
             <Setter Property="Foreground" Value="#ffffff" />
@@ -56,19 +67,19 @@
         </Style>
         <Style Selector="Button.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="#409cff" />
+            <Setter Property="Opacity" Value="1" />
         </Style>
         <Style Selector="Button.primary:pressed /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="#0070e0" />
+            <Setter Property="Opacity" Value="1" />
         </Style>
         <Style Selector="Button.primary:disabled /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="#0a84ff" />
             <Setter Property="Opacity" Value="0.35" />
         </Style>
 
-        <!-- ── Button.ghost — inline text action ─────────────────── -->
         <Style Selector="Button.ghost">
             <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="#636366" />
+            <Setter Property="Foreground" Value="{DynamicResource AppLabelTertiary}" />
             <Setter Property="Padding" Value="8 4" />
             <Setter Property="FontSize" Value="12" />
         </Style>
@@ -77,28 +88,26 @@
             <Setter Property="Opacity" Value="0.7" />
         </Style>
 
-        <!-- ── Button.toolbar — small titlebar action ────────────── -->
         <Style Selector="Button.toolbar">
-            <Setter Property="Background" Value="#14ffffff" />
-            <Setter Property="Foreground" Value="#ccebebf5" />
+            <Setter Property="Background" Value="{DynamicResource AppToolbarBtn}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppLabelSecondary}" />
             <Setter Property="CornerRadius" Value="6" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="Padding" Value="10 4" />
         </Style>
         <Style Selector="Button.toolbar:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="#24ffffff" />
+            <Setter Property="Background" Value="{DynamicResource AppToolbarBtnHover}" />
+            <Setter Property="Opacity" Value="1" />
         </Style>
 
-        <!-- ── ProgressBar ────────────────────────────────────────── -->
         <Style Selector="ProgressBar">
-            <Setter Property="Background" Value="#3a3a3c" />
+            <Setter Property="Background" Value="{DynamicResource AppElevated}" />
             <Setter Property="Foreground" Value="#0a84ff" />
             <Setter Property="CornerRadius" Value="1" />
             <Setter Property="MinHeight" Value="2" />
             <Setter Property="MaxHeight" Value="2" />
         </Style>
 
-        <!-- ── ScrollBar ──────────────────────────────────────────── -->
         <Style Selector="ScrollBar">
             <Setter Property="Background" Value="Transparent" />
         </Style>

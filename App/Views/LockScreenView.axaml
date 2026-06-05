@@ -3,59 +3,53 @@
              xmlns:vm="using:Fcry.App.ViewModels"
              x:Class="Fcry.App.Views.LockScreenView"
              x:DataType="vm:LockScreenViewModel"
-             Background="#1c1c1e">
+             Background="{DynamicResource AppBg}">
 
     <Grid>
-        <!-- Centered form — traffic lights float above top-left, safe here -->
         <StackPanel MaxWidth="300"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Spacing="0">
 
-            <!-- Lock icon -->
             <TextBlock Text="🔐"
                        FontSize="44"
                        HorizontalAlignment="Center"
                        Margin="0 0 0 16" />
 
-            <!-- Title -->
             <TextBlock Text="Fcry"
                        FontSize="22"
                        FontWeight="SemiBold"
-                       Foreground="#ffffff"
+                       Foreground="{DynamicResource AppLabel}"
                        HorizontalAlignment="Center"
                        Margin="0 0 0 6" />
 
-            <!-- Subtitle -->
             <TextBlock Text="Enter your passphrase to continue"
                        FontSize="13"
-                       Foreground="#636366"
+                       Foreground="{DynamicResource AppLabelTertiary}"
                        HorizontalAlignment="Center"
                        Margin="0 0 0 28" />
 
-            <!-- Passphrase field -->
             <TextBox x:Name="PassphraseBox"
                      Text="{Binding Passphrase}"
                      PasswordChar="●"
                      Watermark="Passphrase"
                      IsEnabled="{Binding !IsUnlocking}" />
 
-            <!-- Key file row -->
             <Border Margin="0 8 0 0"
-                    Background="#2c2c2e"
+                    Background="{DynamicResource AppSurface}"
                     CornerRadius="8"
                     Padding="10 8">
                 <Grid ColumnDefinitions="*,Auto">
                     <StackPanel Grid.Column="0" Spacing="1" VerticalAlignment="Center">
                         <TextBlock Text="Key file"
                                    FontSize="11"
-                                   Foreground="#636366" />
+                                   Foreground="{DynamicResource AppLabelTertiary}" />
                         <TextBlock Text="{Binding KeyFilePath, TargetNullValue='None selected'}"
                                    FontSize="12"
-                                   Foreground="#98989d"
+                                   Foreground="{DynamicResource AppLabelSecondary}"
                                    TextTrimming="CharacterEllipsis" />
                     </StackPanel>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
                         <Button Content="Choose"
                                 Classes="ghost"
                                 Command="{Binding BrowseKeyFileCommand}"
@@ -68,7 +62,6 @@
                 </Grid>
             </Border>
 
-            <!-- Error message -->
             <TextBlock Text="{Binding ErrorMessage}"
                        Foreground="#ff453a"
                        FontSize="12"
@@ -77,7 +70,6 @@
                        Margin="0 12 0 0"
                        IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
 
-            <!-- Unlock button -->
             <Button Content="{Binding UnlockButtonText}"
                     Classes="primary"
                     Command="{Binding UnlockCommand}"

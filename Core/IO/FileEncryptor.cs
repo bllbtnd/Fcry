@@ -71,6 +71,8 @@ public static class FileEncryptor
         double progressOffset,
         CancellationToken cancellationToken)
     {
+        var finalDest = PathHelper.FindAvailable(destPath);
+
         var perFileSalt = new byte[FileHeader.SaltSize];
         var iv = new byte[FileHeader.IvSize];
         RandomNumberGenerator.Fill(perFileSalt.AsSpan());
@@ -92,7 +94,7 @@ public static class FileEncryptor
             var nameLenBytes = BitConverter.GetBytes((long)nameBytes.Length);
             if (BitConverter.IsLittleEndian) Array.Reverse(nameLenBytes);
 
-            await using var output = new FileStream(destPath, FileMode.Create, FileAccess.Write);
+            await using var output = new FileStream(finalDest, FileMode.Create, FileAccess.Write);
             await output.WriteAsync(FileHeader.Magic, cancellationToken);
             output.WriteByte(FileHeader.CurrentVersion);
             await output.WriteAsync(perFileSalt, cancellationToken);
@@ -103,7 +105,7 @@ public static class FileEncryptor
             await output.WriteAsync(tag, cancellationToken);
 
             progress?.Report(1.0);
-            return CryptoResult.Ok();
+            return CryptoResult.Ok(finalDest);
         }
         finally
         {

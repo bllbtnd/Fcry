@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Fcry.App.Services;
 using Fcry.Core.Crypto;
 using Fcry.Core.Models;
 
@@ -11,7 +12,7 @@ public sealed partial class LockScreenViewModel : ViewModelBase
 {
     private readonly MasterKeyManager _keyManager;
     private readonly AppConfig _config;
-    private readonly Func<Task<string?>> _pickKeyFile;
+    private readonly IPickerService _picker;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(UnlockCommand))]
@@ -29,11 +30,11 @@ public sealed partial class LockScreenViewModel : ViewModelBase
 
     public event EventHandler? UnlockSucceeded;
 
-    public LockScreenViewModel(MasterKeyManager keyManager, AppConfig config, Func<Task<string?>> pickKeyFile)
+    public LockScreenViewModel(MasterKeyManager keyManager, AppConfig config, IPickerService picker)
     {
         _keyManager = keyManager;
         _config = config;
-        _pickKeyFile = pickKeyFile;
+        _picker = picker;
     }
 
     [RelayCommand(CanExecute = nameof(CanUnlock))]
@@ -85,9 +86,8 @@ public sealed partial class LockScreenViewModel : ViewModelBase
     [RelayCommand]
     private async Task BrowseKeyFileAsync()
     {
-        var path = await _pickKeyFile();
-        if (path != null)
-            KeyFilePath = path;
+        var path = await _picker.PickKeyFileAsync();
+        if (path != null) KeyFilePath = path;
     }
 
     [RelayCommand]
