@@ -6,3 +6,10 @@ obj/
 .DS_Store
 build/publish-*/
 build/Fcry.app/
+build/Fcry-win-*/
+build/Fcry-linux-*/
+build/Fcry-osx-*/
+build/*.zip
+build/*.tar.gz
+build/Fcry.iconset/
+build/icon_1024.png
