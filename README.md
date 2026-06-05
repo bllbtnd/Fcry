@@ -1,86 +1,125 @@
 # Fcry
 
-A cross-platform file encryption desktop app built with .NET 10 and Avalonia UI 11. Encrypt and decrypt files and folders using AES-256-GCM with a passphrase-derived master key that lives only in memory.
+Fcry is a simple, cross-platform desktop app for encrypting your files and folders with a passphrase. Drop a file in, get an encrypted `.fcry` file out. Drop a `.fcry` file in, get your original back. Your passphrase never touches the disk.
 
 ![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey)
 ![.NET](https://img.shields.io/badge/.NET-10.0-purple)
 ![Avalonia](https://img.shields.io/badge/Avalonia-11-blue)
 
----
+## Screenshots
 
-## Features
+| Lock screen | Main screen |
+|---|---|
+| ![Lock screen](screenshots/lock-screen.png) | ![Main screen](screenshots/main-screen.png) |
 
-- **Passphrase-based authentication** — master key derived with Argon2id, never written to disk
-- **AES-256-GCM encryption** — authenticated encryption with a unique key and IV per file or folder
-- **Folder encryption** — drop a folder to pack and encrypt it as a single `.fcry` file; decrypt to restore the original folder
-- **Drag and drop** — drop any file or folder to encrypt; drop a `.fcry` file to decrypt
-- **Multi-passphrase friendly** — unlock with any passphrase; files encrypted with a different passphrase will fail decryption gracefully with a clear error
-- **Bulk operations** — process multiple files and folders at once with per-item progress
-- **Optional key file** — XOR the master key with SHA-256 of a key file for two-factor security
-- **Auto-lock** — session locks after 5 minutes of inactivity, wiping the key from memory
-- **Inactivity countdown** — visible 60-second warning before auto-lock triggers
-- **Manual lock** — lock button always visible in the top bar
+## What it does
 
----
+- Encrypt any file or folder with AES-256-GCM, the same encryption used by banks and password managers.
+- Decrypt is automatic. Fcry recognizes its own `.fcry` files and turns them back into the original file or folder.
+- Encrypt whole folders. A folder becomes a single `.fcry` file and unpacks back to the exact same folder.
+- Process many items at once, with a progress bar for each.
+- Lock the app at any time, and it auto-locks after 5 minutes of inactivity so your files stay protected if you step away.
 
-## How it works
+## Getting the app
 
-### Key derivation
+Fcry ships as a normal desktop app you can double-click. You build it once with the included scripts, then run it like any other program.
 
-On unlock, Argon2id derives a 32-byte master key from the passphrase and a random salt stored in the app config. The salt is the only thing persisted — the key exists only in memory for the duration of the session.
+First install the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10), then from the project folder run the script for your system:
 
-```
-passphrase + stored_salt → Argon2id → master_key (memory only)
-```
+### macOS
 
-Because there is no passphrase verification stored on disk, you can unlock with any passphrase. If you use a different passphrase than the one used to encrypt a file, decryption fails with an authentication error — nothing is corrupted, nothing is exposed.
-
-### Per-file encryption
-
-Each file (or folder archive) gets a fresh random salt and IV. HKDF-SHA256 derives a unique encryption key from the master key and that salt — the master key is never used directly for encryption.
-
-```
-master_key + random_salt → HKDF-SHA256 → file_key → AES-256-GCM(file_key, iv, plaintext)
+```bash
+./build/package-macos.sh
 ```
 
-### Folder encryption
+This creates `build/Fcry.app`. Double-click it in Finder to run. To keep it around, drag `Fcry.app` into your Applications folder.
 
-When a folder is dropped, Fcry zips it with `System.IO.Compression`, encrypts the ZIP blob with the same AES-GCM scheme, and stores the folder name (with a trailing `/` marker) in the header. Decryption detects the marker, extracts the ZIP, and recreates the original folder structure.
+The first time you open it, macOS may say the app is from an unidentified developer. Right-click the app, choose Open, then click Open in the dialog. You only need to do this once.
 
-### File format
+### Windows
+
+```bash
+./build/package-windows.sh
+```
+
+This creates `build/Fcry-win-x64.zip`. Copy it to your Windows machine, unzip it, and double-click `Fcry.exe`. Windows may show a SmartScreen warning on first run. Click More info, then Run anyway.
+
+### Linux
+
+```bash
+./build/package-linux.sh
+```
+
+This creates `build/Fcry-linux-x64.tar.gz`. Extract it on your Linux machine, then either run `./bin/Fcry` directly or run `./install.sh` to add Fcry to your application menu with its icon.
+
+All builds are self-contained, so the person running the app does not need .NET installed.
+
+## How to use it
+
+### 1. Set your passphrase
+
+When you open Fcry you see a lock screen. Type a passphrase and click Unlock. The first passphrase you ever use sets up the app. There is no separate sign-up and no account.
+
+Important: there is no password reset. If you forget your passphrase, the files you encrypted with it cannot be recovered. Choose something you will remember, or store it in a password manager.
+
+### 2. Encrypt or decrypt
+
+Once unlocked, you can add items two ways:
+
+- Drag and drop files or folders onto the window.
+- Click Add Files or Add Folder to pick them with a file browser.
+
+Fcry decides what to do automatically:
+
+- A normal file or folder gets encrypted into a new `.fcry` file next to it.
+- A `.fcry` file gets decrypted back to the original.
+
+Each item shows its progress and result in the queue. When something finishes, click Show to reveal it in your file manager.
+
+### 3. Choose where output goes (optional)
+
+By default, encrypted and decrypted files are saved next to the originals. To send them somewhere else, click Change next to Output and pick a folder.
+
+If a file with the same name already exists, Fcry never overwrites it. It saves a numbered copy instead, like `report (1).pdf`.
+
+### 4. Lock when you are done
+
+Click Lock in the top-right corner, or press Cmd+L on macOS or Ctrl+L on Windows and Linux. Locking wipes your passphrase from memory and returns to the lock screen. Fcry also locks itself automatically after 5 minutes of inactivity, with a countdown shown in the last minute.
+
+## Using a key file (optional extra security)
+
+A key file turns your passphrase into two-factor protection. On the lock screen, click Choose next to Key file and pick any file: a photo, a PDF, anything. From then on, unlocking needs both your passphrase and that exact file.
+
+Use this if you want files that cannot be opened with the passphrase alone. Keep the key file somewhere separate from your encrypted files, like a USB stick.
+
+Warning: if you lose the key file, files encrypted with it cannot be recovered. The key file is never changed or copied by Fcry, but do not edit it, because even a one-byte change makes it a different key.
+
+## How your files are protected
+
+- Your passphrase is never written to disk. Fcry turns it into a key in memory using Argon2id, a slow, memory-hard function designed to resist password cracking.
+- Every file gets its own unique encryption key, derived with HKDF-SHA256. The master key from your passphrase is never used to encrypt directly.
+- Encryption uses AES-256-GCM, which also detects tampering. If a `.fcry` file is corrupted or you use the wrong passphrase, Fcry tells you clearly instead of producing a broken file.
+- Key material in memory is zeroed the moment it is no longer needed, and on supported systems the master key is locked into RAM so it is never written to the swap file.
+
+The only thing Fcry stores on disk is a random salt used for key derivation. It never stores your passphrase or your key.
+
+## File format
+
+Encrypted files use this layout:
 
 ```
 [4 bytes]  Magic: 0x46 0x43 0x52 0x59  ("FCRY")
 [1 byte]   Version: 0x01
-[32 bytes] Per-file salt (used in HKDF)
+[32 bytes] Per-file salt (used in key derivation)
 [12 bytes] IV (nonce)
 [8 bytes]  Original name length (big-endian)
-[N bytes]  Original name — plain filename, or "foldername/" for folder archives
-[rest]     Ciphertext + 16-byte GCM authentication tag
+[N bytes]  Original name, or "foldername/" for an encrypted folder
+[rest]     Ciphertext plus a 16-byte authentication tag
 ```
 
-The magic bytes allow Fcry to auto-detect whether a dropped `.fcry` file should be decrypted — no toggle needed.
+## Building and running from source
 
-### Key material handling
-
-All sensitive byte buffers are zeroed with `CryptographicOperations.ZeroMemory` immediately after use:
-
-| Material | Zeroed when |
-|---|---|
-| Passphrase bytes | Immediately after Argon2id call |
-| Master key | On lock, on dispose |
-| Per-file HKDF key | In `finally` after every operation |
-| Decrypted plaintext | In `finally` after writing to disk/folder |
-
----
-
-## Getting started
-
-### Prerequisites
-
-- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10)
-
-### Run
+For development you can run the app directly without packaging:
 
 ```bash
 git clone https://github.com/yourname/Fcry
@@ -88,85 +127,46 @@ cd Fcry/App
 dotnet run
 ```
 
-### Build
+To build the whole solution:
 
 ```bash
 dotnet build Fcry.sln
 ```
 
-### Publish (macOS)
-
-```bash
-dotnet publish App/App.csproj -c Release -r osx-arm64 --self-contained
-```
-
----
-
-## Project structure
+### Project layout
 
 ```
 Fcry/
-├── Core/                        # Class library — zero Avalonia dependency
-│   ├── Crypto/
-│   │   ├── ArgonKeyDerivation   # Argon2id (4 iter / 64 MB / 2 threads)
-│   │   ├── HkdfDerivation       # HKDF-SHA256 per-file key derivation
-│   │   ├── AesGcmCipher         # AES-256-GCM encrypt / decrypt
-│   │   └── MasterKeyManager     # In-memory key holder, ZeroMemory on lock
-│   ├── IO/
-│   │   ├── FileEncryptor        # File + folder → .fcry (shared encrypt-bytes core)
-│   │   ├── FileDecryptor        # .fcry → file or folder (ZIP extraction)
-│   │   └── ConfigManager        # Persists Argon2 salt
-│   └── Models/
-│       ├── FileHeader           # Magic bytes, version, header size constants
-│       ├── AppConfig            # Argon2 salt
-│       └── CryptoResult         # Ok() / Fail(error)
-└── App/                         # Avalonia UI — MVVM, no business logic in code-behind
-    ├── ViewModels/
-    │   ├── MainWindowViewModel  # Switches between lock and main screens
-    │   ├── LockScreenViewModel  # Argon2 derivation, optional key file XOR
-    │   ├── MainScreenViewModel  # Queue drain, folder detection, inactivity timer
-    │   └── FileQueueItem        # Per-item state, progress, folder flag
-    ├── Views/
-    │   ├── MainWindow           # Pointer/key events → inactivity reset
-    │   ├── LockScreenView       # Passphrase input, key file picker, Enter-to-unlock
-    │   └── MainScreenView       # Drag-drop zone (files + folders), queue list
-    └── Converters/
-        └── AppConverters        # FuncValueConverters for status colors and visibility
+  Core/    Pure .NET class library with all the cryptography and file logic. No UI.
+  App/     Avalonia user interface, built with the MVVM pattern.
+  build/   Packaging scripts and the app icon for each platform.
 ```
 
----
+### Cryptography settings
 
-## Security notes
-
-- The master key is **never written to disk** in any form
-- There is **no passphrase verification token** stored on disk — any passphrase unlocks the session; wrong-passphrase detection happens at decryption via GCM authentication tag failure
-- Key file mode XORs the master key with `SHA-256(key_file_bytes)` — losing the key file means losing access to files encrypted with it
-- The GCM tag detects both wrong passphrase and file corruption — decryption fails explicitly, never producing garbage output
-
----
-
-## Argon2id parameters
-
-| Parameter | Value |
+| Setting | Value |
 |---|---|
-| Iterations | 4 |
-| Memory | 64 MB |
-| Parallelism | 2 |
-| Output length | 32 bytes |
+| Key derivation | Argon2id |
+| Argon2id iterations | 4 |
+| Argon2id memory | 64 MB |
+| Argon2id parallelism | 2 |
+| Key length | 32 bytes (256-bit) |
+| Per-file key | HKDF-SHA256 |
+| Encryption | AES-256-GCM |
 
----
-
-## Dependencies
+### Dependencies
 
 | Package | Purpose |
 |---|---|
-| [Avalonia 11](https://avaloniaui.net) | Cross-platform UI framework |
-| [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet) | MVVM source generators |
-| [Konscious.Security.Cryptography.Argon2](https://github.com/kmaragon/Konscious.Security.Cryptography) | Argon2id implementation |
+| [Avalonia 11](https://avaloniaui.net) | Cross-platform user interface |
+| [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet) | MVVM helpers |
+| [Konscious.Security.Cryptography.Argon2](https://github.com/kmaragon/Konscious.Security.Cryptography) | Argon2id |
 
-All other cryptographic primitives (AES-GCM, HKDF, SHA-256) use .NET 10's built-in `System.Security.Cryptography`. Folder archiving uses the built-in `System.IO.Compression`.
+Everything else (AES-GCM, HKDF, SHA-256, folder archiving) uses the .NET runtime built in.
 
----
+## A note on trust
+
+Fcry is built for personal use and is not independently audited. It is not code-signed or notarized, which is why your operating system may warn you on first launch. It makes no network connections, has no telemetry, and stores nothing about you. Your passphrase and keys never leave your computer.
 
 ## License
 
