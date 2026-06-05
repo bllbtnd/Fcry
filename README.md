@@ -18,6 +18,7 @@ Fcry is a simple, cross-platform desktop app for encrypting your files and folde
 - Decrypt is automatic. Fcry recognizes its own `.fcry` files and turns them back into the original file or folder.
 - Encrypt whole folders. A folder becomes a single `.fcry` file and unpacks back to the exact same folder.
 - Process many items at once, with a progress bar for each.
+- Optionally delete the original after it is processed, using a secure overwrite rather than a plain delete.
 - Lock the app at any time, and it auto-locks after 5 minutes of inactivity so your files stay protected if you step away.
 
 ## Getting the app
@@ -58,9 +59,11 @@ All builds are self-contained, so the person running the app does not need .NET 
 
 ### 1. Set your passphrase
 
-When you open Fcry you see a lock screen. Type a passphrase and click Unlock. The first passphrase you ever use sets up the app. There is no separate sign-up and no account.
+When you open Fcry you see a lock screen. Type a passphrase and click Unlock. There is no account and no sign-up, and your passphrase is never stored anywhere.
 
-Important: there is no password reset. If you forget your passphrase, the files you encrypted with it cannot be recovered. Choose something you will remember, or store it in a password manager.
+Any passphrase will unlock the app, but a file can only be decrypted with the exact passphrase (and key file, if you used one) that encrypted it. If you try the wrong passphrase on a `.fcry` file, Fcry shows a clear error and leaves the file untouched.
+
+Important: there is no password reset. If you forget the passphrase you used to encrypt something, it cannot be recovered. Choose something you will remember, or store it in a password manager.
 
 ### 2. Encrypt or decrypt
 
@@ -74,7 +77,7 @@ Fcry decides what to do automatically:
 - A normal file or folder gets encrypted into a new `.fcry` file next to it.
 - A `.fcry` file gets decrypted back to the original.
 
-Each item shows its progress and result in the queue. When something finishes, click Show to reveal it in your file manager.
+Each item shows its progress and result in the queue. When something finishes, click Show to reveal it in your file manager. While items are still processing you can press Cancel to stop the ones that have not started yet.
 
 ### 3. Choose where output goes (optional)
 
@@ -82,7 +85,13 @@ By default, encrypted and decrypted files are saved next to the originals. To se
 
 If a file with the same name already exists, Fcry never overwrites it. It saves a numbered copy instead, like `report (1).pdf`.
 
-### 4. Lock when you are done
+### 4. Delete the original (optional)
+
+There is a toggle to delete the original after a successful encryption or decryption. It is off by default. When it is on, encrypting a file removes the original unencrypted copy, and decrypting a `.fcry` file removes the encrypted copy. The new file is always kept, only the source is removed, and only if the operation succeeds.
+
+This is a secure delete. The file is overwritten with random data and then removed, which defeats ordinary file recovery tools. Be aware that on SSDs and modern filesystems this cannot be guaranteed at the hardware level, so for highly sensitive data full-disk encryption is still the strongest protection.
+
+### 5. Lock when you are done
 
 Click Lock in the top-right corner, or press Cmd+L on macOS or Ctrl+L on Windows and Linux. Locking wipes your passphrase from memory and returns to the lock screen. Fcry also locks itself automatically after 5 minutes of inactivity, with a countdown shown in the last minute.
 
